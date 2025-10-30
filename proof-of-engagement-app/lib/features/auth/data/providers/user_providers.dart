@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../profile/domain/entities/user.dart';
-import '../../../../shared/services/phantom_wallet_service.dart';
+import '../../../../shared/services/wallet_service.dart';
 
 // Provider for current user
 final currentUserProvider = StateProvider<User?>((ref) => null);

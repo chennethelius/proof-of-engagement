@@ -11,10 +11,10 @@ class AppConfig {
     defaultValue: 'https://api.devnet.solana.com',
   );
   
-  // Program IDs (will be set after deployment)
+  // Program IDs (Deployed on Devnet)
   static const String proofOfEngagementProgramId = String.fromEnvironment(
     'PROGRAM_ID',
-    defaultValue: '',
+    defaultValue: 'HifshiXvDF4MwEevZuukURThkjrZFfspn3iP1vdFitdC',
   );
   
   // API Configuration

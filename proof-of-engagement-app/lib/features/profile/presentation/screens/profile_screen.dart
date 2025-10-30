@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/services/phantom_wallet_service.dart';
+import '../../../../shared/services/wallet_service.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -139,7 +139,7 @@ class ProfileScreen extends ConsumerWidget {
                 );
 
                 if (shouldLogout == true && context.mounted) {
-                  await walletService.disconnect();
+                  await walletService.deleteWallet();
                   context.go('/connect-wallet');
                 }
               },

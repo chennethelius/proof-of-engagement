@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/services/phantom_wallet_service.dart';
+import '../../../../shared/services/wallet_service.dart';
 import '../../../../core/theme/tokens/tokens.dart';
 import '../../../../core/theme/widgets/widgets.dart';
 

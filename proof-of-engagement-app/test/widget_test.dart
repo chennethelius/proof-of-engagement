@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:proof_of_engagement_app/screens/home_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:proof_of_engagement_app/features/auth/presentation/screens/connect_wallet_screen.dart';
 
 void main() {
-  testWidgets('HomeScreen has a title and a list of clubs', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+  testWidgets('Connect wallet screen has title', (WidgetTester tester) async {
+    await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: ConnectWalletScreen())));
 
-    expect(find.text('Clubs'), findsOneWidget);
-    expect(find.byType(ListView), findsOneWidget);
+    expect(find.text('Proof of Engagement'), findsOneWidget);
   });
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/services/phantom_wallet_service.dart';
+import '../../../../shared/services/wallet_service.dart';
 
 class ConnectWalletScreen extends ConsumerWidget {
   const ConnectWalletScreen({super.key});
@@ -41,8 +41,8 @@ class ConnectWalletScreen extends ConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () async {
-                    final success = await walletService.connect();
-                    if (success && context.mounted) {
+                    final mnemonic = await walletService.generateNewWallet();
+                    if (mnemonic != null && context.mounted) {
                       context.goNamed('student-home');
                     }
                   },
@@ -64,8 +64,8 @@ class ConnectWalletScreen extends ConsumerWidget {
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: () async {
-                    final success = await walletService.connect();
-                    if (success && context.mounted) {
+                    final mnemonic = await walletService.generateNewWallet();
+                    if (mnemonic != null && context.mounted) {
                       context.goNamed('club-home');
                     }
                   },
