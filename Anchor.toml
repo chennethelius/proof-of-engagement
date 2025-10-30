@@ -5,10 +5,10 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-proof_of_engagement = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+proof_of_engagement = "HifshiXvDF4MwEevZuukURThkjrZFfspn3iP1vdFitdC"
 
 [programs.devnet]
-proof_of_engagement = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+proof_of_engagement = "HifshiXvDF4MwEevZuukURThkjrZFfspn3iP1vdFitdC"
 
 [registry]
 url = "https://api.apr.dev"

@@ -1,0 +1,109 @@
+# Rust/Cargo/Anchor
+**/target/
+**/*.rs.bk
+**/*.pdb
+Cargo.lock
+.anchor/
+
+# Solana
+test-ledger/
+.deploy/
+
+# Flutter/Dart
+proof-of-engagement-app/.dart_tool/
+proof-of-engagement-app/.flutter-plugins
+proof-of-engagement-app/.flutter-plugins-dependencies
+proof-of-engagement-app/.packages
+proof-of-engagement-app/.pub-cache/
+proof-of-engagement-app/.pub/
+proof-of-engagement-app/build/
+proof-of-engagement-app/flutter_*.png
+proof-of-engagement-app/linked_*.ds
+proof-of-engagement-app/unlinked.ds
+proof-of-engagement-app/unlinked_spec.ds
+
+# IntelliJ
+proof-of-engagement-app/.idea/
+proof-of-engagement-app/*.iml
+proof-of-engagement-app/*.ipr
+proof-of-engagement-app/*.iws
+
+# Android
+proof-of-engagement-app/**/android/**/gradle-wrapper.jar
+proof-of-engagement-app/**/android/.gradle
+proof-of-engagement-app/**/android/captures/
+proof-of-engagement-app/**/android/gradlew
+proof-of-engagement-app/**/android/gradlew.bat
+proof-of-engagement-app/**/android/local.properties
+proof-of-engagement-app/**/android/**/GeneratedPluginRegistrant.java
+proof-of-engagement-app/**/android/key.properties
+proof-of-engagement-app/**/android/.cxx/
+proof-of-engagement-app/**/android/**/*.jks
+
+# iOS/XCode
+proof-of-engagement-app/**/ios/**/*.mode1v3
+proof-of-engagement-app/**/ios/**/*.mode2v3
+proof-of-engagement-app/**/ios/**/*.moved-aside
+proof-of-engagement-app/**/ios/**/*.pbxuser
+proof-of-engagement-app/**/ios/**/*.perspectivev3
+proof-of-engagement-app/**/ios/**/*sync/
+proof-of-engagement-app/**/ios/**/.sconsign.dblite
+proof-of-engagement-app/**/ios/**/.tags*
+proof-of-engagement-app/**/ios/**/.vagrant/
+proof-of-engagement-app/**/ios/**/DerivedData/
+proof-of-engagement-app/**/ios/**/Icon?
+proof-of-engagement-app/**/ios/**/Pods/
+proof-of-engagement-app/**/ios/**/.symlinks/
+proof-of-engagement-app/**/ios/**/profile
+proof-of-engagement-app/**/ios/**/xcuserdata
+proof-of-engagement-app/**/ios/.generated/
+proof-of-engagement-app/**/ios/Flutter/.last_build_id
+proof-of-engagement-app/**/ios/Flutter/App.framework
+proof-of-engagement-app/**/ios/Flutter/Flutter.framework
+proof-of-engagement-app/**/ios/Flutter/Flutter.podspec
+proof-of-engagement-app/**/ios/Flutter/Generated.xcconfig
+proof-of-engagement-app/**/ios/Flutter/ephemeral
+proof-of-engagement-app/**/ios/Flutter/app.flx
+proof-of-engagement-app/**/ios/Flutter/app.zip
+proof-of-engagement-app/**/ios/Flutter/flutter_assets/
+proof-of-engagement-app/**/ios/Flutter/flutter_export_environment.sh
+proof-of-engagement-app/**/ios/ServiceDefinitions.json
+proof-of-engagement-app/**/ios/Runner/GeneratedPluginRegistrant.*
+
+# macOS
+proof-of-engagement-app/**/macos/Flutter/GeneratedPluginRegistrant.swift
+proof-of-engagement-app/**/macos/Flutter/ephemeral
+proof-of-engagement-app/**/macos/Pods/
+
+# Linux
+proof-of-engagement-app/**/linux/flutter/generated_plugin_registrant.cc
+proof-of-engagement-app/**/linux/flutter/generated_plugin_registrant.h
+proof-of-engagement-app/**/linux/flutter/generated_plugins.cmake
+
+# Windows
+proof-of-engagement-app/**/windows/flutter/generated_plugin_registrant.cc
+proof-of-engagement-app/**/windows/flutter/generated_plugin_registrant.h
+proof-of-engagement-app/**/windows/flutter/generated_plugins.cmake
+
+# Web
+proof-of-engagement-app/**/web/flutter_service_worker.js
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+.vscode/
+.history/
+*.log
+*.swp
+*.swo
+*~
+.env
+.env.local
+
+# Keypairs (IMPORTANT - never commit private keys!)
+*.json
+!package.json
+!pubspec.lock
+!analysis_options.yaml
+!tsconfig.json
