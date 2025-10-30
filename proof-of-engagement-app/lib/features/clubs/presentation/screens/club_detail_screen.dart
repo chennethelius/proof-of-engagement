@@ -98,26 +98,26 @@ class _ClubDetailScreenState extends ConsumerState<ClubDetailScreen>
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   club['name'],
-                  style: const TextStyle(
-                    color: Colors.white,
-                    shadows: [Shadow(blurRadius: 2, color: Colors.black)],
+                  style: TextStyle(
+                    color: AppColors.white,
+                    shadows: [Shadow(blurRadius: 2, color: AppColors.black.withOpacity(0.5))],
                   ),
                 ),
                 background: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                       colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.secondary,
+                        AppColors.primaryPurple,
+                        AppColors.primaryPurple.withOpacity(0.7),
                       ],
                     ),
                   ),
-                  child: const Icon(
-                    Icons.groups,
+                  child: Icon(
+                    AppIcons.clubs,
                     size: 80,
-                    color: Colors.white24,
+                    color: AppColors.white.withOpacity(0.2),
                   ),
                 ),
               ),

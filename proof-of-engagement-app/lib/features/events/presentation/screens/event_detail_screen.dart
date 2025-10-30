@@ -29,9 +29,9 @@ class EventDetailScreen extends ConsumerWidget {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 mockEvent['name'],
-                style: const TextStyle(
-                  color: Colors.white,
-                  shadows: [Shadow(blurRadius: 2, color: Colors.black)],
+                style: TextStyle(
+                  color: AppColors.white,
+                  shadows: [Shadow(blurRadius: 2, color: AppColors.black.withOpacity(0.5))],
                 ),
               ),
               background: Container(
@@ -40,15 +40,15 @@ class EventDetailScreen extends ConsumerWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Theme.of(context).colorScheme.primary,
-                      Theme.of(context).colorScheme.secondary,
+                      AppColors.accentPink,
+                      AppColors.accentPink.withOpacity(0.7),
                     ],
                   ),
                 ),
-                child: const Icon(
-                  Icons.celebration,
+                child: Icon(
+                  AppIcons.events,
                   size: 80,
-                  color: Colors.white24,
+                  color: AppColors.white.withOpacity(0.2),
                 ),
               ),
             ),
