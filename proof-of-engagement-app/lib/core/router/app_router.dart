@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/connect_wallet_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/home/presentation/screens/club_home_screen.dart';
 import '../../features/clubs/presentation/screens/clubs_list_screen.dart';
 import '../../features/clubs/presentation/screens/club_detail_screen.dart';
 import '../../features/clubs/presentation/screens/create_club_screen.dart';
@@ -28,6 +29,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/connect-wallet',
         name: 'connect-wallet',
         builder: (context, state) => const ConnectWalletScreen(),
+      ),
+      GoRoute(
+        path: '/student-home',
+        name: 'student-home',
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/club-home',
+        name: 'club-home',
+        builder: (context, state) => const ClubHomeScreen(),
       ),
       GoRoute(
         path: '/',

@@ -8,7 +8,6 @@ class ConnectWalletScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final walletState = ref.watch(walletServiceProvider);
     final walletService = ref.read(walletServiceProvider.notifier);
 
     return Scaffold(
@@ -25,30 +24,58 @@ class ConnectWalletScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               Text(
-                'Connect Your Wallet',
-                style: Theme.of(context).textTheme.headlineMedium,
+                'Proof of Engagement',
+                style: Theme.of(context).textTheme.headlineLarge,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Text(
-                'Connect your Phantom wallet to track engagement and earn rewards',
+                'Connect your wallet to get started',
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 48),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  final success = await walletService.connect();
-                  if (success && context.mounted) {
-                    context.go('/');
-                  }
-                },
-                icon: const Icon(Icons.account_balance_wallet),
-                label: const Text('Connect Phantom Wallet'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
+              const SizedBox(height: 64),
+              
+              // Student Login Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final success = await walletService.connect();
+                    if (success && context.mounted) {
+                      context.goNamed('student-home');
+                    }
+                  },
+                  icon: const Icon(Icons.person),
+                  label: const Text('Student Login'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 20,
+                    ),
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Club Login Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    final success = await walletService.connect();
+                    if (success && context.mounted) {
+                      context.goNamed('club-home');
+                    }
+                  },
+                  icon: const Icon(Icons.groups),
+                  label: const Text('Club Login'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 20,
+                    ),
                   ),
                 ),
               ),
