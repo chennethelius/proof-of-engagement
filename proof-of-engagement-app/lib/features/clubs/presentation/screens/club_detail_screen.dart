@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/tokens/tokens.dart';
+import '../../../../core/theme/widgets/widgets.dart';
 
 class ClubDetailScreen extends ConsumerStatefulWidget {
   final String clubId;
@@ -144,64 +146,76 @@ class _ClubDetailScreenState extends ConsumerState<ClubDetailScreen>
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _toggleMembership,
-        icon: Icon(_isMember ? Icons.check : Icons.add),
-        label: Text(_isMember ? 'Member' : 'Join Club'),
-        backgroundColor: _isMember ? Colors.green : null,
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          if (_isMember)
+            AppButton.outlined(
+              text: 'Share',
+              icon: AppIcons.share,
+              onPressed: () {
+                // TODO: Implement share
+              },
+            ),
+          SizedBox(width: AppSpacing.sm),
+          AppButton.primary(
+            text: _isMember ? 'Member' : 'Join Club',
+            icon: _isMember ? AppIcons.checkCircle : AppIcons.add,
+            onPressed: _toggleMembership,
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildAboutTab(Map<String, dynamic> club) {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(AppSpacing.md),
       children: [
         // Stats Card
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStatColumn('Rank', '#${club['rank']}', Icons.emoji_events),
-                    _buildStatColumn('ELO', '${club['eloRating']}', Icons.star),
-                    _buildStatColumn('Members', '${club['members']}', Icons.people),
-                    _buildStatColumn('Events', '${club['totalEvents']}', Icons.event),
-                  ],
-                ),
-              ],
-            ),
+        AppCard.gradient(
+          padding: EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildStatColumn('Rank', '#${club['rank']}', AppIcons.trophy),
+                  _buildStatColumn('ELO', '${club['eloRating']}', AppIcons.star),
+                  _buildStatColumn('Members', '${club['members']}', AppIcons.people),
+                  _buildStatColumn('Events', '${club['totalEvents']}', AppIcons.events),
+                ],
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppSpacing.md),
 
         // Description
         Text(
           'About',
-          style: Theme.of(context).textTheme.titleLarge,
+          style: AppTypography.titleLarge(context),
         ),
-        const SizedBox(height: 8),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(club['description']),
+        SizedBox(height: AppSpacing.sm),
+        AppCard(
+          padding: EdgeInsets.all(AppSpacing.md),
+          child: Text(
+            club['description'],
+            style: AppTypography.bodyMedium(context),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppSpacing.md),
 
         // Category
         Text(
           'Category',
-          style: Theme.of(context).textTheme.titleLarge,
+          style: AppTypography.titleLarge(context),
         ),
-        const SizedBox(height: 8),
-        Card(
+        SizedBox(height: AppSpacing.sm),
+        AppCard(
           child: ListTile(
-            leading: const Icon(Icons.category),
-            title: Text(club['category']),
+            leading: Icon(AppIcons.clubs, color: AppColors.primaryPurple),
+            title: Text(club['category'], style: AppTypography.bodyLarge(context)),
           ),
         ),
       ],
@@ -212,66 +226,66 @@ class _ClubDetailScreenState extends ConsumerState<ClubDetailScreen>
     final events = club['upcomingEvents'] as List;
     
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(AppSpacing.md),
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               'Upcoming Events',
-              style: Theme.of(context).textTheme.titleLarge,
+              style: AppTypography.titleLarge(context),
             ),
             if (_isMember)
-              FilledButton.icon(
+              AppButton.primary(
+                text: 'Create',
+                icon: AppIcons.add,
                 onPressed: () => context.push('/events/create?clubId=${widget.clubId}'),
-                icon: const Icon(Icons.add),
-                label: const Text('Create'),
               ),
           ],
         ),
-        const SizedBox(height: 16),
-        ...events.map((event) => Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: InkWell(
-            onTap: () => context.push('/events/${event['id']}'),
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event['name'],
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+        SizedBox(height: AppSpacing.md),
+        ...events.map((event) => AnimatedAppCard(
+          margin: EdgeInsets.only(bottom: AppSpacing.sm),
+          onTap: () => context.push('/events/${event['id']}'),
+          child: Padding(
+            padding: EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event['name'],
+                  style: AppTypography.titleMedium(context).copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: AppSpacing.sm),
+                Row(
+                  children: [
+                    Icon(AppIcons.calendar, size: AppIconSize.sm, color: AppColors.primaryPurple),
+                    SizedBox(width: AppSpacing.sm),
+                    Text(
+                      '${event['date']} at ${event['time']}',
+                      style: AppTypography.bodyMedium(context),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.calendar_today, size: 16),
-                      const SizedBox(width: 8),
-                      Text('${event['date']} at ${event['time']}'),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on, size: 16),
-                      const SizedBox(width: 8),
-                      Text(event['location']),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.people, size: 16),
-                      const SizedBox(width: 8),
-                      Text('${event['attending']} attending'),
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+                SizedBox(height: AppSpacing.xs),
+                Row(
+                  children: [
+                    Icon(AppIcons.location, size: AppIconSize.sm, color: AppColors.accentPink),
+                    SizedBox(width: AppSpacing.sm),
+                    Text(event['location'], style: AppTypography.bodyMedium(context)),
+                  ],
+                ),
+                SizedBox(height: AppSpacing.xs),
+                Row(
+                  children: [
+                    Icon(AppIcons.people, size: AppIconSize.sm, color: AppColors.accentBlue),
+                    SizedBox(width: AppSpacing.sm),
+                    Text('${event['attending']} attending', style: AppTypography.bodyMedium(context)),
+                  ],
+                ),
+              ],
             ),
           ),
         )),
@@ -283,41 +297,47 @@ class _ClubDetailScreenState extends ConsumerState<ClubDetailScreen>
     final members = club['topMembers'] as List;
     
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(AppSpacing.md),
       children: [
         Text(
           'Top Members',
-          style: Theme.of(context).textTheme.titleLarge,
+          style: AppTypography.titleLarge(context),
         ),
-        const SizedBox(height: 16),
-        ...members.map((member) => Card(
-          margin: const EdgeInsets.only(bottom: 8),
+        SizedBox(height: AppSpacing.md),
+        ...members.map((member) => AnimatedAppCard(
+          margin: EdgeInsets.only(bottom: AppSpacing.sm),
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: _getRankColor(member['rank']),
               child: Text(
                 '#${member['rank']}',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: AppTypography.labelMedium(context).copyWith(
+                  color: AppColors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            title: Text(member['name']),
+            title: Text(member['name'], style: AppTypography.bodyLarge(context)),
             trailing: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: AppSpacing.xs,
+              ),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
+                color: AppColors.accentOrange.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.star, size: 16),
-                  const SizedBox(width: 4),
+                  Icon(AppIcons.star, size: AppIconSize.xs, color: AppColors.accentOrange),
+                  SizedBox(width: AppSpacing.xs),
                   Text(
                     '${member['points']} pts',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: AppTypography.labelMedium(context).copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.accentOrange,
+                    ),
                   ),
                 ],
               ),
@@ -331,17 +351,20 @@ class _ClubDetailScreenState extends ConsumerState<ClubDetailScreen>
   Widget _buildStatColumn(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: Theme.of(context).colorScheme.primary),
-        const SizedBox(height: 8),
+        Icon(icon, color: AppColors.white, size: AppIconSize.lg),
+        SizedBox(height: AppSpacing.sm),
         Text(
           value,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          style: AppTypography.titleLarge(context).copyWith(
             fontWeight: FontWeight.bold,
+            color: AppColors.white,
           ),
         ),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall,
+          style: AppTypography.bodySmall(context).copyWith(
+            color: AppColors.white.withOpacity(0.8),
+          ),
         ),
       ],
     );

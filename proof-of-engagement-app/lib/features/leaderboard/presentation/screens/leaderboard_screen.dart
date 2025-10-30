@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/tokens/tokens.dart';
+import '../../../../core/theme/widgets/widgets.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
@@ -142,7 +143,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           // Leaderboard List
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(AppSpacing.md),
               itemCount: leaderboard.length,
               itemBuilder: (context, index) {
                 final club = leaderboard[index];
@@ -159,17 +160,17 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     if (topClubs.length < 3) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           // 2nd Place
           _buildPodiumPlace(topClubs[1], 2, 120, Colors.grey[600]!),
-          const SizedBox(width: 16),
+          SizedBox(width: AppSpacing.md),
           // 1st Place
           _buildPodiumPlace(topClubs[0], 1, 150, Colors.amber),
-          const SizedBox(width: 16),
+          SizedBox(width: AppSpacing.md),
           // 3rd Place
           _buildPodiumPlace(topClubs[2], 3, 100, Colors.brown),
         ],
@@ -180,41 +181,51 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Widget _buildPodiumPlace(Map<String, dynamic> club, int rank, double height, Color color) {
     return Column(
       children: [
-        Icon(
-          Icons.emoji_events,
-          size: 40,
-          color: color,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          club['name'],
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
+        Container(
+          padding: EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            gradient: _getRankGradient(rank),
+            shape: BoxShape.circle,
           ),
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+          child: Icon(
+            AppIcons.trophy,
+            size: AppIconSize.xl,
+            color: AppColors.white,
+          ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: AppSpacing.sm),
+        SizedBox(
+          width: 90,
+          child: Text(
+            club['name'],
+            style: AppTypography.labelSmall(context).copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        SizedBox(height: AppSpacing.xs),
         Text(
           '${club['eloRating']} ELO',
-          style: const TextStyle(fontSize: 11),
+          style: AppTypography.labelSmall(context).copyWith(
+            color: AppColors.gray600,
+          ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: AppSpacing.sm),
         Container(
           width: 80,
           height: height,
           decoration: BoxDecoration(
-            color: color,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+            gradient: _getRankGradient(rank),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusMD)),
           ),
           child: Center(
             child: Text(
               '#$rank',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 32,
+              style: AppTypography.displaySmall(context).copyWith(
+                color: AppColors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -228,138 +239,169 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     final rankChange = club['prevRank'] - club['rank'];
     final hasRankChange = rankChange != 0;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: InkWell(
-        onTap: () => context.push('/clubs/${club['id']}'),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              // Rank Badge
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: _getRankColor(club['rank']),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    '#${club['rank']}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+    return AnimatedAppCard(
+      margin: EdgeInsets.only(bottom: AppSpacing.sm),
+      onTap: () => context.push('/clubs/${club['id']}'),
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.md),
+        child: Row(
+          children: [
+            // Rank Badge
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                gradient: _getRankGradient(club['rank']),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+              ),
+              child: Center(
+                child: Text(
+                  '#${club['rank']}',
+                  style: AppTypography.titleMedium(context).copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+            ),
+            SizedBox(width: AppSpacing.md),
 
-              // Club Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            club['name'],
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        if (hasRankChange)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: rankChange > 0 ? Colors.green[100] : Colors.red[100],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  rankChange > 0 ? Icons.arrow_upward : Icons.arrow_downward,
-                                  size: 14,
-                                  color: rankChange > 0 ? Colors.green : Colors.red,
-                                ),
-                                const SizedBox(width: 2),
-                                Text(
-                                  '${rankChange.abs()}',
-                                  style: TextStyle(
-                                    color: rankChange > 0 ? Colors.green : Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Text(
-                          '${club['eloRating']} ELO',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+            // Club Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          club['name'],
+                          style: AppTypography.titleMedium(context).copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        const Icon(Icons.people, size: 14),
-                        const SizedBox(width: 4),
-                        Text('${club['members']}', style: const TextStyle(fontSize: 12)),
-                        const SizedBox(width: 12),
-                        const Icon(Icons.event, size: 14),
-                        const SizedBox(width: 4),
-                        Text('${club['events']}', style: const TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              // Stats
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '${club['avgAttendance']}%',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                      ),
+                      if (hasRankChange)
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: AppSpacing.xs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: (rankChange > 0 
+                                ? AppColors.secondaryGreen 
+                                : AppColors.error).withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                rankChange > 0 ? AppIcons.trending : AppIcons.trendingDown,
+                                size: AppIconSize.xs,
+                                color: rankChange > 0 
+                                    ? AppColors.secondaryGreen 
+                                    : AppColors.error,
+                              ),
+                              SizedBox(width: AppSpacing.xs),
+                              Text(
+                                '${rankChange.abs()}',
+                                style: AppTypography.labelSmall(context).copyWith(
+                                  color: rankChange > 0 
+                                      ? AppColors.secondaryGreen 
+                                      : AppColors.error,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
-                  const Text(
-                    'Attendance',
-                    style: TextStyle(fontSize: 11),
+                  SizedBox(height: AppSpacing.xs),
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.xs,
+                    children: [
+                      _buildStatChip(AppIcons.star, '${club['eloRating']} ELO', AppColors.accentOrange),
+                      _buildStatChip(AppIcons.people, '${club['members']}', AppColors.accentBlue),
+                      _buildStatChip(AppIcons.events, '${club['events']}', AppColors.accentPink),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+
+            // Attendance Badge
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '${club['avgAttendance']}%',
+                  style: AppTypography.titleMedium(context).copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryPurple,
+                  ),
+                ),
+                Text(
+                  'Attendance',
+                  style: AppTypography.labelSmall(context).copyWith(
+                    color: AppColors.gray600,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Color _getRankColor(int rank) {
+  Widget _buildStatChip(IconData icon, String label, Color color) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: AppIconSize.xs, color: color),
+          SizedBox(width: AppSpacing.xs),
+          Text(
+            label,
+            style: AppTypography.labelSmall(context).copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Gradient _getRankGradient(int rank) {
     switch (rank) {
       case 1:
-        return Colors.amber;
+        return LinearGradient(
+          colors: [Color(0xFFFFD700), Color(0xFFFFA500)], // Gold
+        );
       case 2:
-        return Colors.grey[600]!;
+        return LinearGradient(
+          colors: [Color(0xFFC0C0C0), Color(0xFF808080)], // Silver
+        );
       case 3:
-        return Colors.brown;
+        return LinearGradient(
+          colors: [Color(0xFFCD7F32), Color(0xFF8B4513)], // Bronze
+        );
       default:
-        return Colors.blue;
+        return LinearGradient(
+          colors: [AppColors.primaryPurple, AppColors.primaryPurpleLight],
+        );
     }
   }
 
@@ -367,36 +409,41 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('ELO Rating System'),
-        content: const SingleChildScrollView(
+        title: Text('ELO Rating System', style: AppTypography.titleLarge(context)),
+        content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'How is ELO calculated?',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: AppTypography.bodyLarge(context).copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              SizedBox(height: 8),
-              Text('ELO ratings are calculated based on:'),
-              SizedBox(height: 8),
-              Text('• Event Frequency (30%)'),
-              Text('• Attendance Rate (25%)'),
-              Text('• Photo Proof Quality (15%)'),
-              Text('• Member Retention (20%)'),
-              Text('• Growth Rate (10%)'),
-              SizedBox(height: 16),
+              SizedBox(height: AppSpacing.sm),
+              Text('ELO ratings are calculated based on:', style: AppTypography.bodyMedium(context)),
+              SizedBox(height: AppSpacing.sm),
+              Text('• Event Frequency (30%)', style: AppTypography.bodyMedium(context)),
+              Text('• Attendance Rate (25%)', style: AppTypography.bodyMedium(context)),
+              Text('• Photo Proof Quality (15%)', style: AppTypography.bodyMedium(context)),
+              Text('• Member Retention (20%)', style: AppTypography.bodyMedium(context)),
+              Text('• Growth Rate (10%)', style: AppTypography.bodyMedium(context)),
+              SizedBox(height: AppSpacing.md),
               Text(
                 'Higher ratings indicate more active and engaged clubs.',
-                style: TextStyle(fontStyle: FontStyle.italic),
+                style: AppTypography.bodyMedium(context).copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: AppColors.gray600,
+                ),
               ),
             ],
           ),
         ),
         actions: [
-          FilledButton(
+          AppButton.primary(
+            text: 'Got it',
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Got it'),
           ),
         ],
       ),

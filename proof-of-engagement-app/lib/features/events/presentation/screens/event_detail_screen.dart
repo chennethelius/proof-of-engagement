@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:convert';
+import '../../../../core/theme/tokens/tokens.dart';
+import '../../../../core/theme/widgets/widgets.dart';
 
 class EventDetailScreen extends ConsumerWidget {
   final String eventId;
@@ -55,63 +57,66 @@ class EventDetailScreen extends ConsumerWidget {
           // Content
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Event Info Card
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildInfoRow(
-                            context,
-                            Icons.calendar_today,
-                            'Date',
-                            mockEvent['date'],
-                          ),
-                          const Divider(height: 24),
-                          _buildInfoRow(
-                            context,
-                            Icons.access_time,
-                            'Time',
-                            mockEvent['time'],
-                          ),
-                          const Divider(height: 24),
-                          _buildInfoRow(
-                            context,
-                            Icons.location_on,
-                            'Location',
-                            mockEvent['location'],
-                          ),
-                          const Divider(height: 24),
-                          _buildInfoRow(
-                            context,
-                            Icons.people,
-                            'Capacity',
-                            '${mockEvent['attending']}/${mockEvent['capacity']}',
-                          ),
-                        ],
-                      ),
+                  AppCard(
+                    padding: EdgeInsets.all(AppSpacing.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildInfoRow(
+                          context,
+                          AppIcons.calendar,
+                          'Date',
+                          mockEvent['date'],
+                          AppColors.accentBlue,
+                        ),
+                        Divider(height: AppSpacing.lg),
+                        _buildInfoRow(
+                          context,
+                          AppIcons.time,
+                          'Time',
+                          mockEvent['time'],
+                          AppColors.accentPink,
+                        ),
+                        Divider(height: AppSpacing.lg),
+                        _buildInfoRow(
+                          context,
+                          AppIcons.location,
+                          'Location',
+                          mockEvent['location'],
+                          AppColors.accentOrange,
+                        ),
+                        Divider(height: AppSpacing.lg),
+                        _buildInfoRow(
+                          context,
+                          AppIcons.people,
+                          'Capacity',
+                          '${mockEvent['attending']}/${mockEvent['capacity']}',
+                          AppColors.secondaryGreen,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AppSpacing.md),
 
                   // Description
                   Text(
                     'About This Event',
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: AppTypography.titleLarge(context),
                   ),
-                  const SizedBox(height: 8),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(mockEvent['description']),
+                  SizedBox(height: AppSpacing.sm),
+                  AppCard(
+                    padding: EdgeInsets.all(AppSpacing.md),
+                    child: Text(
+                      mockEvent['description'],
+                      style: AppTypography.bodyMedium(context),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AppSpacing.md),
 
                   // QR Code Section (for club organizers)
                   if (mockEvent['isOrganizer'])
@@ -120,72 +125,85 @@ class EventDetailScreen extends ConsumerWidget {
                   // Attendees Section
                   Text(
                     'Attendees (${mockEvent['attending']})',
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: AppTypography.titleLarge(context),
                   ),
-                  const SizedBox(height: 8),
-                  Card(
+                  SizedBox(height: AppSpacing.sm),
+                  AppCard(
                     child: Column(
                       children: List.generate(
                         5,
                         (index) => ListTile(
                           leading: CircleAvatar(
-                            child: Text('${index + 1}'),
+                            backgroundColor: AppColors.primaryPurple,
+                            child: Text(
+                              '${index + 1}',
+                              style: AppTypography.labelMedium(context).copyWith(
+                                color: AppColors.white,
+                              ),
+                            ),
                           ),
-                          title: Text('Student ${index + 1}'),
-                          subtitle: const Text('Checked in'),
-                          trailing: const Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
+                          title: Text(
+                            'Student ${index + 1}',
+                            style: AppTypography.bodyLarge(context),
+                          ),
+                          subtitle: Text(
+                            'Checked in',
+                            style: AppTypography.bodySmall(context),
+                          ),
+                          trailing: Icon(
+                            AppIcons.checkCircle,
+                            color: AppColors.secondaryGreen,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AppSpacing.md),
 
                   // Photo Gallery (if event requires photos)
                   if (mockEvent['requiresPhoto'])
                     _buildPhotoGallery(context),
 
-                  const SizedBox(height: 80), // Space for FAB
+                  SizedBox(height: AppSpacing.xxxl * 2), // Space for FAB
                 ],
               ),
             ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: AppButton.gradient(
+        text: mockEvent['isOrganizer'] ? 'Show QR Code' : 'Check In',
+        icon: mockEvent['isOrganizer'] ? AppIcons.qrCode : AppIcons.qrScan,
         onPressed: () {
           if (mockEvent['isOrganizer']) {
-            // Show QR code
             _showQRDialog(context, mockEvent);
           } else {
-            // Go to check-in screen
             context.push('/events/$eventId/checkin');
           }
         },
-        icon: Icon(mockEvent['isOrganizer'] ? Icons.qr_code : Icons.qr_code_scanner),
-        label: Text(mockEvent['isOrganizer'] ? 'Show QR Code' : 'Check In'),
+        isFullWidth: false,
       ),
     );
   }
 
-  Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value) {
+  Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value, Color color) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
-        const SizedBox(width: 12),
+        Icon(icon, size: AppIconSize.md, color: color),
+        SizedBox(width: AppSpacing.sm),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: AppTypography.bodySmall(context).copyWith(
+                  color: AppColors.gray600,
+                ),
               ),
               Text(
                 value,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: AppTypography.bodyLarge(context).copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -202,42 +220,42 @@ class EventDetailScreen extends ConsumerWidget {
       children: [
         Text(
           'Event QR Code',
-          style: Theme.of(context).textTheme.titleLarge,
+          style: AppTypography.titleLarge(context),
         ),
-        const SizedBox(height: 8),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: QrImageView(
-                    data: jsonEncode({
-                      'eventId': eventId,
-                      'clubId': event['clubId'],
-                      'name': event['name'],
-                      'requiresPhoto': event['requiresPhoto'],
-                    }),
-                    version: QrVersions.auto,
-                    size: 200.0,
-                    backgroundColor: Colors.white,
-                  ),
+        SizedBox(height: AppSpacing.sm),
+        AppCard.gradient(
+          padding: EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
                 ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Students scan this to check in',
-                  style: TextStyle(fontSize: 12),
+                child: QrImageView(
+                  data: jsonEncode({
+                    'eventId': eventId,
+                    'clubId': event['clubId'],
+                    'name': event['name'],
+                    'requiresPhoto': event['requiresPhoto'],
+                  }),
+                  version: QrVersions.auto,
+                  size: 200.0,
+                  backgroundColor: AppColors.white,
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: AppSpacing.md),
+              Text(
+                'Students scan this to check in',
+                style: AppTypography.bodySmall(context).copyWith(
+                  color: AppColors.white.withOpacity(0.9),
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppSpacing.md),
       ],
     );
   }
@@ -248,28 +266,32 @@ class EventDetailScreen extends ConsumerWidget {
       children: [
         Text(
           'Event Photos',
-          style: Theme.of(context).textTheme.titleLarge,
+          style: AppTypography.titleLarge(context),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: AppSpacing.sm),
         SizedBox(
           height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: 5,
             itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.only(right: 8),
+              padding: EdgeInsets.only(right: AppSpacing.sm),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
                 child: Container(
                   width: 120,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.photo, size: 48, color: Colors.grey),
+                  color: AppColors.gray200,
+                  child: Icon(
+                    AppIcons.image,
+                    size: AppIconSize.xxxl,
+                    color: AppColors.gray400,
+                  ),
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppSpacing.md),
       ],
     );
   }
@@ -279,20 +301,20 @@ class EventDetailScreen extends ConsumerWidget {
       context: context,
       builder: (context) => Dialog(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(AppSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'Event QR Code',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: AppTypography.titleLarge(context),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AppSpacing.md),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
                 ),
                 child: QrImageView(
                   data: jsonEncode({
@@ -303,19 +325,22 @@ class EventDetailScreen extends ConsumerWidget {
                   }),
                   version: QrVersions.auto,
                   size: 250.0,
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.white,
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: AppSpacing.md),
+              Text(
                 'Students can scan this to check in',
-                style: TextStyle(fontSize: 12),
+                style: AppTypography.bodySmall(context).copyWith(
+                  color: AppColors.gray600,
+                ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
-              FilledButton(
+              SizedBox(height: AppSpacing.md),
+              AppButton.primary(
+                text: 'Close',
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Close'),
+                isFullWidth: true,
               ),
             ],
           ),
