@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/tokens/tokens.dart';
+import '../../../../core/theme/widgets/widgets.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
@@ -84,12 +86,16 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Leaderboard'),
+        title: Text(
+          'Leaderboard',
+          style: AppTypography.titleLarge(context),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.info_outline),
+            icon: Icon(AppIcons.info, size: AppIconSize.md),
             onPressed: () => _showEloInfoDialog(),
           ),
+          SizedBox(width: AppSpacing.sm),
         ],
       ),
       body: Column(
@@ -97,19 +103,28 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           // Category Filter
           Container(
             height: 60,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
               itemCount: _categories.length,
               itemBuilder: (context, index) {
                 final category = _categories[index];
                 final isSelected = category == _selectedCategory;
                 return Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                  padding: EdgeInsets.only(right: AppSpacing.sm),
                   child: FilterChip(
-                    label: Text(category),
+                    label: Text(
+                      category,
+                      style: AppTypography.labelMedium(context).copyWith(
+                        color: isSelected ? AppColors.white : AppColors.gray700,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     selected: isSelected,
+                    backgroundColor: AppColors.gray100,
+                    selectedColor: AppColors.primaryPurple,
+                    checkmarkColor: AppColors.white,
                     onSelected: (selected) {
                       setState(() {
                         _selectedCategory = category;

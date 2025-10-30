@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/tokens/tokens.dart';
+import '../../../../core/theme/widgets/widgets.dart';
 
 class ClubsListScreen extends StatefulWidget {
   const ClubsListScreen({super.key});
@@ -86,19 +88,26 @@ class _ClubsListScreenState extends State<ClubsListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Clubs'),
+        title: Text(
+          'Clubs',
+          style: AppTypography.titleLarge(context),
+        ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
+          preferredSize: Size.fromHeight(AppSpacing.xxxl + AppSpacing.md),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: AppSpacing.horizontal(AppSpacing.md),
             child: TextField(
               controller: _searchController,
+              style: AppTypography.bodyMedium(context),
               decoration: InputDecoration(
                 hintText: 'Search clubs...',
-                prefixIcon: const Icon(Icons.search),
+                hintStyle: AppTypography.bodyMedium(context).copyWith(
+                  color: AppColors.gray500,
+                ),
+                prefixIcon: Icon(AppIcons.search, size: AppIconSize.md),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: Icon(AppIcons.close, size: AppIconSize.sm),
                         onPressed: () {
                           setState(() {
                             _searchController.clear();
@@ -107,12 +116,6 @@ class _ClubsListScreenState extends State<ClubsListScreen> {
                         },
                       )
                     : null,
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.surface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
               ),
               onChanged: (value) {
                 setState(() {
@@ -124,155 +127,254 @@ class _ClubsListScreenState extends State<ClubsListScreen> {
         ),
       ),
       body: clubs.isEmpty
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.search_off, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text('No clubs found'),
+                  Icon(
+                    AppIcons.searchOff,
+                    size: AppIconSize.responsive(context, AppIconSize.xxxl * 1.5),
+                    color: AppColors.gray400,
+                  ),
+                  SizedBox(height: AppSpacing.md),
+                  Text(
+                    'No clubs found',
+                    style: AppTypography.bodyLarge(context).copyWith(
+                      color: AppColors.gray600,
+                    ),
+                  ),
                 ],
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(AppSpacing.md),
               itemCount: clubs.length,
               itemBuilder: (context, index) {
-                final club = clubs[index];
-                return _buildClubCard(context, club);
+                return AppAnimations.fadeIn(
+                  duration: AppAnimations.normal,
+                  child: _buildClubCard(context, clubs[index]),
+                );
               },
             ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/clubs/create'),
-        icon: const Icon(Icons.add),
-        label: const Text('Create Club'),
+        icon: Icon(AppIcons.add),
+        label: Text(
+          'Create Club',
+          style: AppTypography.labelLarge(context).copyWith(
+            color: AppColors.white,
+          ),
+        ),
+        backgroundColor: AppColors.primaryPurple,
       ),
     );
   }
 
   Widget _buildClubCard(BuildContext context, Map<String, dynamic> club) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: () => context.push('/clubs/${club['id']}'),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return AnimatedAppCard(
+      margin: EdgeInsets.only(bottom: AppSpacing.md),
+      padding: EdgeInsets.all(AppSpacing.md),
+      onTap: () => context.push('/clubs/${club['id']}'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  // Rank Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: _getRankColor(club['rank']),
-                      borderRadius: BorderRadius.circular(20),
+              // Rank Badge
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs,
+                ),
+                decoration: BoxDecoration(
+                  gradient: _getRankGradient(club['rank']),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _getRankColor(club['rank']).withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.emoji_events, size: 16, color: Colors.white),
-                        const SizedBox(width: 4),
-                        Text(
-                          '#${club['rank']}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      AppIcons.trophy,
+                      size: AppIconSize.sm,
+                      color: AppColors.white,
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Club Name
-                  Expanded(
-                    child: Text(
-                      club['name'],
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    SizedBox(width: AppSpacing.xs),
+                    Text(
+                      '#${club['rank']}',
+                      style: AppTypography.labelMedium(context).copyWith(
+                        color: AppColors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ],
+                ),
+              ),
+              SizedBox(width: AppSpacing.sm),
+              // Club Name
+              Expanded(
+                child: Text(
+                  club['name'],
+                  style: AppTypography.titleMedium(context).copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  // ELO Rating
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              // ELO Rating
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryPurpleLight.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
+                  border: Border.all(
+                    color: AppColors.primaryPurple.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      AppIcons.trending,
+                      size: AppIconSize.xs,
+                      color: AppColors.primaryPurple,
                     ),
-                    child: Text(
-                      '${club['eloRating']} ELO',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
+                    SizedBox(width: AppSpacing.xs),
+                    Text(
+                      '${club['eloRating']}',
+                      style: AppTypography.labelSmall(context).copyWith(
+                        color: AppColors.primaryPurple,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                club['description'],
-                style: Theme.of(context).textTheme.bodyMedium,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Chip(
-                    label: Text(club['category']),
-                    avatar: const Icon(Icons.category, size: 16),
-                    padding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  const SizedBox(width: 8),
-                  _buildStatChip(
-                    context,
-                    Icons.people,
-                    '${club['members']} members',
-                  ),
-                  const SizedBox(width: 8),
-                  _buildStatChip(
-                    context,
-                    Icons.event,
-                    '${club['events']} events',
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
-        ),
+          SizedBox(height: AppSpacing.sm),
+          Text(
+            club['description'],
+            style: AppTypography.bodyMedium(context).copyWith(
+              color: AppColors.gray700,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: AppSpacing.md),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            children: [
+              _buildChip(
+                context,
+                icon: AppIcons.business,
+                label: club['category'],
+                color: AppColors.accentBlue,
+              ),
+              _buildStatChip(
+                context,
+                AppIcons.people,
+                '${club['members']} members',
+              ),
+              _buildStatChip(
+                context,
+                AppIcons.events,
+                '${club['events']} events',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChip(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: AppIconSize.xs, color: color),
+          SizedBox(width: AppSpacing.xs),
+          Text(
+            label,
+            style: AppTypography.labelSmall(context).copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildStatChip(BuildContext context, IconData icon, String label) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-      ],
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.gray100,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: AppIconSize.xs, color: AppColors.gray600),
+          SizedBox(width: AppSpacing.xs),
+          Text(
+            label,
+            style: AppTypography.labelSmall(context).copyWith(
+              color: AppColors.gray700,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Color _getRankColor(int rank) {
     switch (rank) {
       case 1:
-        return Colors.amber;
+        return AppColors.rankGold;
       case 2:
-        return Colors.grey[600]!;
+        return AppColors.rankSilver;
       case 3:
-        return Colors.brown;
+        return AppColors.rankBronze;
       default:
-        return Colors.blue;
+        return AppColors.primaryPurple;
     }
+  }
+
+  LinearGradient _getRankGradient(int rank) {
+    final color = _getRankColor(rank);
+    return LinearGradient(
+      colors: [color, color.withOpacity(0.7)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
   }
 }
