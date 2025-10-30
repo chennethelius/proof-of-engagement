@@ -1,0 +1,87 @@
+name: proof_of_engagement_app
+description: A proof of engagement application for university clubs that tracks engagement and events on the Solana blockchain.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+  
+  # Routing
+  go_router: ^13.0.0
+  
+  # Solana & Web3
+  solana: ^0.31.2+1
+  bip39: ^1.0.6
+  ed25519_hd_key: ^2.2.0
+  
+  # QR Code
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^3.5.5
+  
+  # Image Handling
+  image_picker: ^1.0.7
+  cached_network_image: ^3.3.1
+  
+  # Storage & Persistence
+  shared_preferences: ^2.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  
+  # HTTP & API
+  http: ^1.2.0
+  dio: ^5.4.0
+  
+  # UI Components
+  flutter_svg: ^2.0.9
+  shimmer: ^3.0.0
+  lottie: ^3.0.0
+  
+  # Utilities
+  intl: ^0.19.0
+  equatable: ^2.0.5
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+  logger: ^2.0.2+1
+  url_launcher: ^6.2.4
+  
+  # Crypto & Blockchain Utils
+  bs58check: ^1.0.2
+  convert: ^3.1.1
+  hex: ^0.2.0
+  crypto: ^3.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.8
+  riverpod_generator: ^2.3.9
+  freezed: ^2.4.6
+  json_serializable: ^6.7.1
+  mockito: ^5.4.4
+
+flutter:
+  uses-material-design: true
+
+  # Uncomment when you add assets
+  # assets:
+  #   - assets/images/
+  
+  # Uncomment when you add custom fonts
+  # fonts:
+  #   - family: Inter
+  #     fonts:
+  #       - asset: assets/fonts/Inter-Regular.ttf
+  #       - asset: assets/fonts/Inter-Bold.ttf
+  #         weight: 700
