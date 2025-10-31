@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../shared/services/wallet_service.dart';
+import 'seed_phrase_backup_screen.dart';
 
 class ConnectWalletScreen extends ConsumerWidget {
   const ConnectWalletScreen({super.key});
@@ -43,7 +43,15 @@ class ConnectWalletScreen extends ConsumerWidget {
                   onPressed: () async {
                     final mnemonic = await walletService.generateNewWallet();
                     if (mnemonic != null && context.mounted) {
-                      context.goNamed('student-home');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SeedPhraseBackupScreen(
+                            seedPhrase: mnemonic,
+                            destination: 'student-home',
+                          ),
+                        ),
+                      );
                     }
                   },
                   icon: const Icon(Icons.person),
@@ -66,7 +74,15 @@ class ConnectWalletScreen extends ConsumerWidget {
                   onPressed: () async {
                     final mnemonic = await walletService.generateNewWallet();
                     if (mnemonic != null && context.mounted) {
-                      context.goNamed('club-home');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SeedPhraseBackupScreen(
+                            seedPhrase: mnemonic,
+                            destination: 'club-home',
+                          ),
+                        ),
+                      );
                     }
                   },
                   icon: const Icon(Icons.groups),
