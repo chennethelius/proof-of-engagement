@@ -1,14 +1,15 @@
 [toolchain]
+anchor_version = "0.29.0"
 
 [features]
 resolution = true
 skip-lint = false
 
 [programs.localnet]
-proof_of_engagement = "HifshiXvDF4MwEevZuukURThkjrZFfspn3iP1vdFitdC"
+proof_of_engagement = "DGMwn7z9fqvaDVXy7tuiXcjvUT8T94Hz5VuTyYo2RPGn"
 
 [programs.devnet]
-proof_of_engagement = "HifshiXvDF4MwEevZuukURThkjrZFfspn3iP1vdFitdC"
+proof_of_engagement = "DGMwn7z9fqvaDVXy7tuiXcjvUT8T94Hz5VuTyYo2RPGn"
 
 [registry]
 url = "https://api.apr.dev"
