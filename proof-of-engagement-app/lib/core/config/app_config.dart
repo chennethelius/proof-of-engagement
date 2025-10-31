@@ -14,7 +14,7 @@ class AppConfig {
   // Program IDs (Deployed on Devnet)
   static const String proofOfEngagementProgramId = String.fromEnvironment(
     'PROGRAM_ID',
-    defaultValue: 'DGMwn7z9fqvaDVXy7tuiXcjvUT8T94Hz5VuTyYo2RPGn',
+    defaultValue: '5cCUfaLSDyNMV21cYsMgBrvVfm8JVNTVzVWcFY2V7R8t',
   );
   
   // API Configuration

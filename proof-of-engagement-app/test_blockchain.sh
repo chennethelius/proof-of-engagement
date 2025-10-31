@@ -27,7 +27,7 @@ echo ""
 
 # Configuration
 CLUSTER="devnet"
-PROGRAM_ID="DGMwn7z9fqvaDVXy7tuiXcjvUT8T94Hz5VuTyYo2RPGn"
+PROGRAM_ID="5cCUfaLSDyNMV21cYsMgBrvVfm8JVNTVzVWcFY2V7R8t"
 
 echo "📋 Configuration:"
 echo "   Cluster: $CLUSTER"
@@ -85,7 +85,8 @@ echo ""
 echo "🚀 Running Flutter integration test..."
 echo ""
 
-cd "$(dirname "$0")/.."
+# Make sure we're in the Flutter project directory (where the script is located)
+cd "$(dirname "$0")"
 
 if flutter test test/solana_integration_test.dart; then
     echo ""

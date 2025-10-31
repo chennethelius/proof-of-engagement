@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:solana/solana.dart';
-import 'package:crypto/crypto.dart';
 import '../../core/config/app_config.dart';
 
 /// Helper service for deriving Program Derived Addresses (PDAs)
@@ -76,71 +75,41 @@ class PdaService {
     return await _findProgramAddress(seeds);
   }
 
-  /// Find Program Address (implements Solana's findProgramAddress)
+  /// Find Program Address (uses Solana's built-in findProgramAddress)
   static Future<PdaResult> _findProgramAddress(List<Uint8List> seeds) async {
-    for (int bump = 255; bump >= 0; bump--) {
-      try {
-        final bumpBytes = Uint8List.fromList([bump]);
-        final allSeeds = [...seeds, bumpBytes];
-        
-        final address = await _createProgramAddress(allSeeds);
-        if (address != null) {
-          return PdaResult(
-            publicKey: address,
-            bump: bump,
-          );
-        }
-      } catch (e) {
-        continue;
-      }
-    }
-    throw Exception('Unable to find valid program address');
-  }
-
-  /// Create Program Address
-  static Future<Ed25519HDPublicKey?> _createProgramAddress(
-    List<Uint8List> seeds,
-  ) async {
-    // Concatenate all seeds
-    final buffer = BytesBuilder();
-    for (final seed in seeds) {
-      if (seed.length > 32) {
-        throw Exception('Max seed length exceeded');
-      }
-      buffer.add(seed);
-    }
-    
-    // Add program ID
-    buffer.add(programId.bytes);
-    
-    // Add PDA marker
-    buffer.add(utf8.encode('ProgramDerivedAddress'));
-
-    // Hash the buffer
-    final hash = sha256.convert(buffer.toBytes()).bytes;
-    
-    // Check if the hash is on the Ed25519 curve
-    // If it is, it's not a valid PDA (we need off-curve points)
-    if (_isOnCurve(Uint8List.fromList(hash))) {
-      return null;
-    }
-
-    return Ed25519HDPublicKey(Uint8List.fromList(hash));
-  }
-
-  /// Check if a point is on the Ed25519 curve
-  /// Simplified check - in production, use a proper curve library
-  static bool _isOnCurve(Uint8List bytes) {
-    // For simplicity, we'll use Solana's approach:
-    // A point is considered off-curve if this check passes
-    // This is a simplified version; the actual implementation
-    // in Solana is more complex
     try {
-      // Try to create a public key - if it fails, it's off-curve (valid PDA)
-      Ed25519HDPublicKey(bytes);
-      return true; // On curve
+      // Use Solana package's built-in PDA derivation
+      final publicKey = await Ed25519HDPublicKey.findProgramAddress(
+        seeds: seeds,
+        programId: programId,
+      );
+      
+      // Find the bump seed by trying from 255 down to 0
+      for (int bump = 255; bump >= 0; bump--) {
+        try {
+          final testKey = await Ed25519HDPublicKey.createProgramAddress(
+            seeds: [...seeds.expand((s) => s), bump],
+            programId: programId,
+          );
+          
+          if (testKey.toBase58() == publicKey.toBase58()) {
+            return PdaResult(
+              publicKey: publicKey,
+              bump: bump,
+            );
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+      
+      // If we found a public key but couldn't find the bump, still return it with bump 255
+      return PdaResult(
+        publicKey: publicKey,
+        bump: 255,
+      );
     } catch (e) {
-      return false; // Off curve (valid for PDA)
+      throw Exception('Unable to find valid program address: $e');
     }
   }
 

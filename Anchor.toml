@@ -9,7 +9,7 @@ skip-lint = false
 proof_of_engagement = "DGMwn7z9fqvaDVXy7tuiXcjvUT8T94Hz5VuTyYo2RPGn"
 
 [programs.devnet]
-proof_of_engagement = "DGMwn7z9fqvaDVXy7tuiXcjvUT8T94Hz5VuTyYo2RPGn"
+proof_of_engagement = "5cCUfaLSDyNMV21cYsMgBrvVfm8JVNTVzVWcFY2V7R8t"
 
 [registry]
 url = "https://api.apr.dev"
