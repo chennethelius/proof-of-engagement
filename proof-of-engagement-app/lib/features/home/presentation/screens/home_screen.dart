@@ -15,7 +15,7 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Proof of Engagement',
+          'Fundd',
           style: AppTypography.titleLarge(context),
         ),
         actions: [

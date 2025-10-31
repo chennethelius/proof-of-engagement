@@ -25,7 +25,7 @@ class ProofOfEngagementApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
     
     return MaterialApp.router(
-      title: 'Proof of Engagement',
+      title: 'fundd',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

@@ -24,8 +24,10 @@ class ConnectWalletScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               Text(
-                'Proof of Engagement',
-                style: Theme.of(context).textTheme.headlineLarge,
+                'Fundd',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),

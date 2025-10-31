@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Proof of Engagement',
+              'Fundd',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 48),
