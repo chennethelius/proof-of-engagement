@@ -89,8 +89,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: ':eventId/checkin',
             name: 'event-checkin',
             builder: (context, state) {
-              final eventId = state.pathParameters['eventId']!;
-              return CheckinScreen(eventId: eventId);
+              return const CheckinScreen();
             },
           ),
         ],

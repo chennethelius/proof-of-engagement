@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'dart:convert';
 import 'package:go_router/go_router.dart';
+import '../../../../shared/services/qr_code_service.dart';
 
 class CheckinScreen extends ConsumerStatefulWidget {
-  final String eventId;
-  
-  const CheckinScreen({
-    super.key,
-    required this.eventId,
-  });
+  const CheckinScreen({super.key});
 
   @override
   ConsumerState<CheckinScreen> createState() => _CheckinScreenState();
@@ -21,7 +16,7 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
     detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
   );
-  
+
   bool _isProcessing = false;
   bool _hasScanned = false;
 
@@ -48,20 +43,23 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
     });
 
     try {
-      // Parse QR code data
-      final qrData = jsonDecode(code);
-      final eventId = qrData['eventId'];
-      final requiresPhoto = qrData['requiresPhoto'] ?? false;
+      // Validate QR code using QRCodeService
+      final validationResult = QRCodeService.validateQR(code);
 
-      // Validate event ID matches
-      if (eventId == widget.eventId) {
-        // TODO: Record attendance on blockchain
-        await _recordAttendance(eventId, requiresPhoto);
-      } else {
-        _showErrorDialog('Invalid QR Code', 'This QR code is for a different event.');
+      if (!validationResult.isValid) {
+        _showErrorDialog('Invalid QR Code', validationResult.error ?? 'Unknown error');
+        setState(() {
+          _hasScanned = false;
+        });
+        return;
       }
+
+      final qrData = validationResult.data!;
+
+      // Record attendance on blockchain
+      await _recordAttendance(qrData);
     } catch (e) {
-      _showErrorDialog('Scan Error', 'Failed to process QR code. Please try again.');
+      _showErrorDialog('Scan Error', 'Failed to process QR code: $e');
       setState(() {
         _hasScanned = false;
       });
@@ -72,61 +70,18 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
     }
   }
 
-  Future<void> _recordAttendance(String eventId, bool requiresPhoto) async {
-    // Simulate blockchain transaction
-    await Future.delayed(const Duration(seconds: 1));
+  Future<void> _recordAttendance(EventQRData qrData) async {
+    // TODO: Call solana_service.recordAttendance() with actual transaction
+    // For now, simulate blockchain transaction
+    await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
 
-    if (requiresPhoto) {
-      // Show photo upload dialog
-      _showPhotoUploadDialog(eventId);
-    } else {
-      // Show success and go back
-      _showSuccessDialog(eventId, false);
-    }
+    // Show success dialog
+    _showSuccessDialog(qrData);
   }
 
-  void _showPhotoUploadDialog(String eventId) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Photo Required 📸'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.photo_camera, size: 64, color: Colors.blue),
-            SizedBox(height: 16),
-            Text(
-              'This event requires photo proof. Please take a photo to complete check-in.',
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              context.pop();
-            },
-            child: const Text('Cancel'),
-          ),
-          FilledButton.icon(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // TODO: Open camera for photo
-              _showSuccessDialog(eventId, true);
-            },
-            icon: const Icon(Icons.camera_alt),
-            label: const Text('Take Photo'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showSuccessDialog(String eventId, bool photoUploaded) {
+  void _showSuccessDialog(EventQRData qrData) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -141,16 +96,16 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
               color: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'You have been checked in to this event!',
+            Text(
+              'Checked in to: ${qrData.eventName}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
-            if (photoUploaded)
-              const Text(
-                'Photo uploaded successfully',
-                style: TextStyle(fontSize: 12, color: Colors.green),
-              ),
+            Text(
+              'Club: ${qrData.clubName}',
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -229,13 +184,13 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
             controller: _scannerController,
             onDetect: _onDetect,
           ),
-          
+
           // Overlay with scanning frame
           CustomPaint(
             painter: ScannerOverlay(),
             child: Container(),
           ),
-          
+
           // Instructions
           Positioned(
             bottom: 0,

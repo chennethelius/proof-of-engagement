@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import '../../../../shared/services/qr_code_service.dart';
 
 class CreateEventScreen extends ConsumerStatefulWidget {
   final String? clubId;
@@ -79,27 +80,32 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         _isLoading = true;
       });
 
-      // Generate QR code data
+      // Generate event ID
       final eventId = _generateEventId();
-      final qrData = jsonEncode({
-        'eventId': eventId,
-        'clubId': widget.clubId ?? 'unknown',
-        'name': _nameController.text,
-        'timestamp': DateTime.now().toIso8601String(),
-        'requiresPhoto': _requiresPhoto,
-      });
+      
+      // TODO: Derive event PDA from blockchain
+      final eventPda = 'mock_pda_$eventId'; // This should come from PdaService
+      
+      // Generate QR code using QRCodeService
+      final qrData = QRCodeService.generateEventQR(
+        eventId: eventId,
+        eventPda: eventPda,
+        clubName: widget.clubId ?? 'Unknown Club',
+        eventName: _nameController.text,
+        expiryMinutes: 5,
+      );
 
       setState(() {
-        _generatedQRData = qrData;
+        _generatedQRData = qrData.toJson();
         _isLoading = false;
       });
 
       // Show QR code dialog
-      _showQRCodeDialog(eventId);
+      _showQRCodeDialog(eventId, qrData);
     }
   }
 
-  void _showQRCodeDialog(String eventId) {
+  void _showQRCodeDialog(String eventId, EventQRData qrData) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -114,12 +120,38 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                 'Your event has been created successfully!',
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+              // QR Expiry Warning
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange.shade200),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.access_time, color: Colors.orange.shade700, size: 16),
+                    const SizedBox(width: 8),
+                    Text(
+                      'QR expires in 5 minutes',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.orange.shade900,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300, width: 2),
                 ),
                 child: QrImageView(
                   data: _generatedQRData!,
@@ -130,14 +162,38 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Event ID: $eventId',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Students can scan this QR code to check in',
-                style: TextStyle(fontSize: 12),
+                qrData.eventName,
+                style: const TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Event ID: ${eventId.substring(0, 8)}...',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.blue, size: 16),
+                    SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'Students scan this to check in',
+                        style: TextStyle(fontSize: 12, color: Colors.blue),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
